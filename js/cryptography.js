@@ -45,8 +45,8 @@ const password = [
   [0, 1, 4],
 ];
 
-var nombre = document.getElementById("text");
-const arrayModule = characters.length;
+var textencryp = document.getElementById("textencryp");
+var textdecrypt = document.getElementById("textdecrypt");
 
 //converts array of letters to numbers
 //convierte array de letras en numeros
@@ -72,15 +72,21 @@ const toLetter = (texto) => {
 
 //Fill in the missing data so that .length()%3 == 0
 //Completa los datos faltantes para  que .length()%3 == 0
-const convert = () => {
+const convert = (text) => {
   let message3x3 = [];
   let message = [];
 
-  message = toNumber(nombre.value);
-  while (message.length % 3 != 0) {
-    message.push(characters.indexOf(" "));
+  message = toNumber(text);
+
+  try {
+    while (message.length % 3 != 0) {
+      message.push(characters.indexOf(" "));
+    }
+  } catch (error) {
+    console.error("Error al completar la matriz");
   }
 
+  console.log("desen");
   console.log(to3x3Array(message));
 
   return to3x3Array(message);
@@ -91,13 +97,17 @@ const convert = () => {
 const to3x3Array = (textArry) => {
   let message3x3 = [];
   let message = [];
-  for (var i = 0; i < textArry.length; i++) {
-    message.push(textArry[i]);
+  try {
+    for (var i = 0; i < textArry.length; i++) {
+      message.push(textArry[i]);
 
-    if ((i + 1) % 3 == 0) {
-      message3x3.push(message);
-      message = [];
+      if ((i + 1) % 3 == 0) {
+        message3x3.push(message);
+        message = [];
+      }
     }
+  } catch (error) {
+    console.error("Error al convertir el texto en un Array 3x3");
   }
 
   return message3x3;
@@ -108,26 +118,17 @@ const to3x3Array = (textArry) => {
 const toModule = (number) => {
   if (number < 0) {
     while (number < 0) {
-      number = number + arrayModule;
+      number = number + characters.length;
     }
     return number;
-  } else if (number >= arrayModule) {
-    while (number >= arrayModule) {
-      number = number - arrayModule;
+  } else if (number >= characters.length) {
+    while (number >= characters.length) {
+      number = number - characters.length;
     }
     return number;
   } else {
     return number;
   }
-};
-
-const encryp = () => {
-  let message = [];
-  let messageEncryp = [];
-  messageEncryp = arrayOperate(convert(), password);
-  message = toLetter(messageEncryp);
-  console.log(message);
-  console.log(messageEncryp);
 };
 
 //Operates the array of the original message in numbers and assigns a letter with the numeric result
@@ -161,6 +162,9 @@ const arrayOperate = (array, password) => {
   return messageEncryp;
 };
 
+
+//get Determinate From Array
+//Otener determinate de la Array
 const getDeterminant = () => {
   let diagonalrigh1 = password[0][0] * password[1][1] * password[2][2];
   let diagonalright2 = password[1][0] * password[2][1] * password[0][2];
@@ -180,11 +184,15 @@ const getDeterminant = () => {
 
 const getInverseOfDeterminant = () => {
   let result;
-  for (var i = 0; true; i++) {
-    if ((getDeterminant() * i) % arrayModule == 1) {
-      result = i;
-      break;
+  try {
+    for (var i = 0; true; i++) {
+      if ((getDeterminant() * i) % characters.length == 1) {
+        result = i;
+        break;
+      }
     }
+  } catch (error) {
+    console.error("Error al obtener el determinate con iverso");
   }
 
   return result;
@@ -194,46 +202,112 @@ const getArrayTranspose = () => {
   let transposedArray = [];
   let transposedArrayTemp = [];
 
-  for (var i = 0; i < 3; i++) {
-    for (var j = 0; j < 3; j++) {
-      transposedArrayTemp.push(password[j][i]);
+  try {
+    for (var i = 0; i < 3; i++) {
+      for (var j = 0; j < 3; j++) {
+        transposedArrayTemp.push(password[j][i]);
+      }
+      transposedArray.push(transposedArrayTemp);
+      transposedArrayTemp = [];
     }
-    transposedArray.push(transposedArrayTemp);
-    transposedArrayTemp = [];
+  } catch (error) {
+    console.error("Error al obtener Array Transpuesta");
   }
 
   return transposedArray;
 };
 
-
-
-
-
 function getPassworDecryp() {
-
   let attachedArray = [[], [], []];
   let getArrayByDeterminant = getArrayTranspose();
-  attachedArray[0][0] = toModule((+((getArrayByDeterminant[1][1] * getArrayByDeterminant[2][2]) - (getArrayByDeterminant[1][2] * getArrayByDeterminant[2][1]))) * getInverseOfDeterminant());
-  attachedArray[0][1] = toModule((-((getArrayByDeterminant[1][0] * getArrayByDeterminant[2][2]) - (getArrayByDeterminant[1][2] * getArrayByDeterminant[0][2]))) * getInverseOfDeterminant());
-  attachedArray[0][2] = toModule((+((getArrayByDeterminant[1][0] * getArrayByDeterminant[2][1]) - (getArrayByDeterminant[1][1] * getArrayByDeterminant[2][0]))) * getInverseOfDeterminant());
-  attachedArray[1][0] = toModule((-((getArrayByDeterminant[0][1] * getArrayByDeterminant[2][2]) - (getArrayByDeterminant[0][2] * getArrayByDeterminant[2][1]))) * getInverseOfDeterminant());
-  attachedArray[1][1] = toModule((+((getArrayByDeterminant[0][0] * getArrayByDeterminant[2][2]) - (getArrayByDeterminant[0][2] * getArrayByDeterminant[2][0]))) * getInverseOfDeterminant());
-  attachedArray[1][2] = toModule((-((getArrayByDeterminant[0][0] * getArrayByDeterminant[2][1]) - (getArrayByDeterminant[0][1] * getArrayByDeterminant[2][0]))) * getInverseOfDeterminant());
-  attachedArray[2][0] = toModule((+((getArrayByDeterminant[0][1] * getArrayByDeterminant[1][2]) - (getArrayByDeterminant[0][2] * getArrayByDeterminant[1][1]))) * getInverseOfDeterminant());
-  attachedArray[2][1] = toModule((-((getArrayByDeterminant[0][0] * getArrayByDeterminant[1][2]) - (getArrayByDeterminant[0][2] * getArrayByDeterminant[1][0]))) * getInverseOfDeterminant());
-  attachedArray[2][2] = toModule((+((getArrayByDeterminant[0][0] * getArrayByDeterminant[1][1]) - (getArrayByDeterminant[0][1] * getArrayByDeterminant[1][0]))) * getInverseOfDeterminant());
+  attachedArray[0][0] = toModule(
+    +(
+      getArrayByDeterminant[1][1] * getArrayByDeterminant[2][2] -
+      getArrayByDeterminant[1][2] * getArrayByDeterminant[2][1]
+    ) * getInverseOfDeterminant()
+  );
+  attachedArray[0][1] = toModule(
+    -(
+      getArrayByDeterminant[1][0] * getArrayByDeterminant[2][2] -
+      getArrayByDeterminant[1][2] * getArrayByDeterminant[2][0]
+    ) * getInverseOfDeterminant()
+  );
+  attachedArray[0][2] = toModule(
+    +(
+      getArrayByDeterminant[1][0] * getArrayByDeterminant[2][1] -
+      getArrayByDeterminant[1][1] * getArrayByDeterminant[2][0]
+    ) * getInverseOfDeterminant()
+  );
+  attachedArray[1][0] = toModule(
+    -(
+      getArrayByDeterminant[0][1] * getArrayByDeterminant[2][2] -
+      getArrayByDeterminant[0][2] * getArrayByDeterminant[2][1]
+    ) * getInverseOfDeterminant()
+  );
+  attachedArray[1][1] = toModule(
+    +(
+      getArrayByDeterminant[0][0] * getArrayByDeterminant[2][2] -
+      getArrayByDeterminant[0][2] * getArrayByDeterminant[2][0]
+    ) * getInverseOfDeterminant()
+  );
+  attachedArray[1][2] = toModule(
+    -(
+      getArrayByDeterminant[0][0] * getArrayByDeterminant[2][1] -
+      getArrayByDeterminant[0][1] * getArrayByDeterminant[2][0]
+    ) * getInverseOfDeterminant()
+  );
+  attachedArray[2][0] = toModule(
+    +(
+      getArrayByDeterminant[0][1] * getArrayByDeterminant[1][2] -
+      getArrayByDeterminant[0][2] * getArrayByDeterminant[1][1]
+    ) * getInverseOfDeterminant()
+  );
+  attachedArray[2][1] = toModule(
+    -(
+      getArrayByDeterminant[0][0] * getArrayByDeterminant[1][2] -
+      getArrayByDeterminant[0][1] * getArrayByDeterminant[1][0]
+    ) * getInverseOfDeterminant()
+  );
+  attachedArray[2][2] = toModule(
+    +(
+      getArrayByDeterminant[0][0] * getArrayByDeterminant[1][1] -
+      getArrayByDeterminant[0][1] * getArrayByDeterminant[1][0]
+    ) * getInverseOfDeterminant()
+  );
   return attachedArray;
 }
+
+const toText = (array) => {
+  let messageFinal = "";
+  for (var i = 0; i < array.length; i++) {
+    for (var j = 0; j < 3; j++) {
+      messageFinal += array[i][j];
+    }
+  }
+
+  return messageFinal;
+};
 
 const decrypt = () => {
   let message = [];
   let messageEncryp = [];
-  messageEncryp = arrayOperate(convert());
+  let messageDecrypt = "";
+  messageEncryp = arrayOperate(convert(textdecrypt.value), getPassworDecryp());
+  console.log(messageEncryp);
+  message = toLetter(messageEncryp);
+  console.log(message);
+
+  let dysplay = document.getElementById("dysplay");
+  dysplay.innerHTML = toText(message);
+};
+
+const encryp = () => {
+  let message = [];
+  let messageEncryp = [];
+  messageEncryp = arrayOperate(convert(textencryp.value), password);
   message = toLetter(messageEncryp);
   console.log(message);
   console.log(messageEncryp);
+  let dysplay = document.getElementById("dysplay");
+  dysplay.innerHTML = toText(message);
 };
-
-
-
-
