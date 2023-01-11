@@ -45,8 +45,17 @@ const password = [
   [0, 1, 4],
 ];
 
-var textencryp = document.getElementById("textencryp");
-var textdecrypt = document.getElementById("textdecrypt");
+
+var buttomDesencriptar=document.getElementById("Desencriptar");
+var buttomEncriptar=document.getElementById("Encriptar");
+var banner = document.getElementById("banner");
+
+
+
+
+
+
+var text = document.getElementById("textCapture");
 
 //converts array of letters to numbers
 //convierte array de letras en numeros
@@ -292,22 +301,28 @@ const decrypt = () => {
   let message = [];
   let messageEncryp = [];
   let messageDecrypt = "";
-  messageEncryp = arrayOperate(convert(textdecrypt.value), getPassworDecryp());
+  messageEncryp = arrayOperate(convert(text.value.toLowerCase()), getPassworDecryp());
   console.log(messageEncryp);
   message = toLetter(messageEncryp);
   console.log(message);
 
-  let dysplay = document.getElementById("dysplay");
+  let dysplay = document.getElementById("textProces");
+  banner.classList.add("hide");
   dysplay.innerHTML = toText(message);
 };
 
 const encryp = () => {
   let message = [];
   let messageEncryp = [];
-  messageEncryp = arrayOperate(convert(textencryp.value), password);
+  messageEncryp = arrayOperate(convert(text.value.toLowerCase()), password);
   message = toLetter(messageEncryp);
   console.log(message);
   console.log(messageEncryp);
-  let dysplay = document.getElementById("dysplay");
+  let dysplay = document.getElementById("textProces");
+  banner.classList.add("hide");
   dysplay.innerHTML = toText(message);
 };
+
+buttomEncriptar.onclick = encryp;
+
+buttomDesencriptar.onclick = decrypt;
